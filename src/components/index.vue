@@ -64,9 +64,9 @@ export default {
   }
   .my-container {
     flex: 1;
-    .my-aside {
-      //   background-color: #ccc;
-    }
+    // .my-aside {
+    //   //   background-color: #ccc;
+    // }
     .my-main {
       padding-top: 0;
       background-color: #e9eef3;
