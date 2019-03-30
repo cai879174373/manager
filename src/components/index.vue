@@ -1,5 +1,5 @@
 <template>
-  <el-container class="index-container">
+  <el-container  class="index-container">
     <el-header class="my-header">
       <el-row>
         <el-col :span="4">
@@ -13,21 +13,23 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-container class="my-container">
+    <el-container  class="my-container">
       <el-aside width="200px" class="my-aside">
-        <el-menu default-active="2" class="el-menu-vertical-demo">
+        <el-menu router default-active="2" class="el-menu-vertical-demo">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>导航一</span>
             </template>
-            <el-menu-item index="1-1">
+            <el-menu-item index="users">
               <span class="el-icon-menu"></span> 选项1
             </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main class="my-main">Main</el-main>
+      <el-main class="my-main">
+       <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -63,10 +65,11 @@ export default {
   .my-container {
     flex: 1;
     .my-aside {
-      background-color: #ccc;
+      //   background-color: #ccc;
     }
     .my-main {
-      background-color: hotpink;
+      padding-top: 0;
+      background-color: #e9eef3;
     }
   }
 }
