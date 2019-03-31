@@ -9,7 +9,7 @@
           <h2>帝格斯后台管理项目</h2>
         </el-col>
         <el-col :span="2">
-          <el-button type="danger">退出</el-button>
+          <el-button type="danger" @click="logout">退出</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -36,7 +36,21 @@
 
 <script>
 export default {
-  name: "index"
+  name: "index",
+  methods: {
+    logout(){
+      window.sessionStorage.removeItem('token');
+      this.$router.push('/login')
+    }
+  },
+  beforeCreate() {
+    if( window.sessionStorage.getItem('token')){
+
+    }else{
+      this.$message.error('兄die,请先登陆')
+      this.$router.push('/login')
+    }
+  },
 };
 </script>
 
@@ -64,9 +78,9 @@ export default {
   }
   .my-container {
     flex: 1;
-    .my-aside {
-      //   background-color: #ccc;
-    }
+    // .my-aside {
+    //   //   background-color: #ccc;
+    // }
     .my-main {
       padding-top: 0;
       background-color: #e9eef3;

@@ -20,7 +20,7 @@
 
     <!-- 表格 -->
       <el-table
-    :data="tableData"
+    :data="userList"
     style="width: 100%">
     <el-table-column
       label="日期"
@@ -60,7 +60,7 @@
       
       
       :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-size="senddata.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="400">
     </el-pagination>
@@ -70,26 +70,27 @@
 <script>
 export default {
     data(){
+      
          return {
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }]
+           total:0,
+       senddata:{
+         query:'',
+         pagenum:1,
+         pagesize:10
+       },
+       userList:[]
       }
-    }
+    },
+   async created() {
+      let res=await this.$axios.get('users', {
+        params:this.senddata,
+        headers:{Authorization:window.sessionStorage.getItem('token')}
+      },
+      )
+
+      
+      console.log(res);
+    },
 };
 </script>
 
