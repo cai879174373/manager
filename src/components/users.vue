@@ -1,11 +1,7 @@
 <template>
   <div class="users-container">
     <!-- 面包屑模块 -->
-    <el-breadcrumb class="user-bread" separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+   <my-bread sectitle='用户管理哦' threetitle='用户列表哦'></my-bread>
     <!-- 输入框模块 -->
     <el-row>
       <el-col :span="6">
@@ -332,11 +328,6 @@ export default {
   .user-btn {
     padding-left: 5px;
   }
-  .user-bread {
-    padding-left: 10px;
-    height: 50px;
-    line-height: 50px;
-    background-color: #d3dce6;
-  }
+  
 }
 </style>

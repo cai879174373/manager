@@ -15,13 +15,13 @@
     </el-header>
     <el-container class="my-container">
       <el-aside width="200px" class="my-aside">
-        <el-menu router default-active="2" class="el-menu-vertical-demo">
-          <el-submenu :index="item.id" v-for="(item,index) in menulist" :key="index">
+        <el-menu router default-active="users" class="el-menu-vertical-demo">
+          <el-submenu :index="item.id+''" v-for="(item,index) in menulist" :key="index">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>{{item.authName}}</span>
             </template>
-            <el-menu-item :index="it.path" v-for="(it,index) in item.children" :key='index'>
+            <el-menu-item :index="it.path"   v-for="(it,index) in item.children" :key='index'>
               <span class="el-icon-menu"></span> {{it.authName}}
             </el-menu-item>
           </el-submenu>
