@@ -1,5 +1,5 @@
 <template>
-  <el-container  class="index-container">
+  <el-container class="index-container">
     <el-header class="my-header">
       <el-row>
         <el-col :span="4">
@@ -13,22 +13,22 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-container  class="my-container">
+    <el-container class="my-container">
       <el-aside width="200px" class="my-aside">
         <el-menu router default-active="2" class="el-menu-vertical-demo">
-          <el-submenu index="1">
+          <el-submenu :index="item.id" v-for="(item,index) in menulist" :key="index">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>导航一</span>
+              <span>{{item.authName}}</span>
             </template>
-            <el-menu-item index="users">
-              <span class="el-icon-menu"></span> 选项1
+            <el-menu-item :index="it.path" v-for="(it,index) in item.children" :key='index'>
+              <span class="el-icon-menu"></span> {{it.authName}}
             </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
       <el-main class="my-main">
-       <router-view></router-view>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -37,20 +37,30 @@
 <script>
 export default {
   name: "index",
+  data() {
+    return {
+      menulist: []
+    };
+  },
   methods: {
-    logout(){
-      window.sessionStorage.removeItem('token');
-      this.$router.push('/login')
+    logout() {
+      window.sessionStorage.removeItem("token");
+      this.$router.push("/login");
     }
   },
   beforeCreate() {
-    if( window.sessionStorage.getItem('token')){
-
-    }else{
-      this.$message.error('兄die,请先登陆')
-      this.$router.push('/login')
+    if (window.sessionStorage.getItem("token")) {
+    } else {
+      this.$message.error("兄die,请先登陆");
+      this.$router.push("/login");
     }
   },
+  async created() {
+    //  获取左侧菜单
+    let res = await this.$axios.get("menus");
+    console.log(res);
+    this.menulist=res.data.data;
+  }
 };
 </script>
 
