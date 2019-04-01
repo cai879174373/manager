@@ -49,14 +49,28 @@
             size="mini"
           ></el-button>
 
-          <el-button type="danger" icon="el-icon-delete" @click="delOne(scope.row)" plain size="mini"></el-button>
-          <el-button type="success" icon="el-icon-check"  plain size="mini"></el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            @click="delOne(scope.row)"
+            plain
+            size="mini"
+          ></el-button>
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            @click="roleedit(scope.row)"
+            plain
+            size="mini"
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <el-pagination
-      :page-sizes="[10, 20, 21, 33]"
+    @size-change='sizechange'
+    @current-change='currentchange'
+      :page-sizes="[5, 10, 21, 33]"
       :page-size="senddata.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
@@ -103,6 +117,28 @@
         <el-button type="primary" @click="submiteditForm('editForm')">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 角色设置弹框 -->
+
+    <el-dialog title="用户角色" :visible.sync="roleFormVisible">
+      <el-form ref="roleForm">
+        <el-form-item label="当前用户" label-width="100px" prop="username">{{editRole.username}}</el-form-item>
+        <el-form-item label="请选择角色" label-width="100px">
+          <el-select v-model="editRole.role_name" placeholder="请选择">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="roleFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitroleForm('roleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,6 +156,13 @@ export default {
       // 弹出框状态
       addFormVisible: false,
       editFormVisible: false,
+
+      // 角色编辑弹窗开关
+      roleFormVisible: false,
+      //角色数据
+      editRole: {},
+      // 角色列表数据
+      roleList: [],
 
       editForm: {
         username: "rose",
@@ -157,9 +200,38 @@ export default {
 
       if (res.data.meta.status == 200) {
         this.editFormVisible = true;
-        this.editForm=res.data.data;
+        this.editForm = res.data.data;
       }
     },
+
+    // 角色设置
+    async roleedit(row) {
+      // 设置弹框
+      this.roleFormVisible = true;
+      this.editRole = row;
+      // console.log(row);
+      let res = await this.$axios.get("roles");
+      // console.log(res);
+      this.roleList=res.data.data;
+
+    },
+    // 角色提交数据
+   async submitroleForm(formName) {
+    //  分配用户角色
+     let res=await this.$axios.put(`users/${this.editRole.id}/role`,{
+       rid:this.editRole.role_name
+     });
+     console.log(res);
+     if(res.data.meta.status==200){
+      //  设置角色成功
+      this.roleFormVisible=false;
+      // 重新获取数据
+      this.search()
+
+     }
+     
+    },
+
     // 编辑提交数据
     submiteditForm(formName) {
       // 编辑用户提交
@@ -215,25 +287,38 @@ export default {
       this.userList = res.data.data.users;
       this.total = res.data.data.total;
     },
-    // 删除数据 
-    delOne(row){
-       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async () => {
-        let res=await this.$axios.delete(`users/${row.id}`)
-        // console.log(res);
-        if(res.data.meta.status==200){
-          this.search();
-        }
-        }).catch(() => {
+    // 删除数据
+    delOne(row) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          let res = await this.$axios.delete(`users/${row.id}`);
+          // console.log(res);
+          if (res.data.meta.status == 200) {
+            this.search();
+          }
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '你真好'
-          });          
+            type: "info",
+            message: "你真好"
+          });
         });
+    },
+    // 页容量发生改变
+    sizechange(size){
+      this.senddata.pagesize=size;
+      this.search()
+    },
+    // 页码数改变
+    currentchange(current){
+      this.senddata.pagenum=current;
+        this.search();
     }
+    
   },
   //发送请求
   async created() {
