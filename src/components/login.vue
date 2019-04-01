@@ -49,7 +49,7 @@ export default {
               if(valid){
                 //   成功提交数据
                  let res= await this.$axios.post("login",this.loginForm)
-                console.log(res);
+                // console.log(res);
                 if(res.data.meta.status===400){
                   this.$message.error(res.data.meta.msg)
                 }else if(res.data.meta.status===200){

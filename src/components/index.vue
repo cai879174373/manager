@@ -58,7 +58,7 @@ export default {
   async created() {
     //  获取左侧菜单
     let res = await this.$axios.get("menus");
-    console.log(res);
+    // console.log(res);
     this.menulist=res.data.data;
   }
 };
