@@ -223,7 +223,7 @@ export default {
           type: 'warning'
         }).then(async () => {
         let res=await this.$axios.delete(`users/${row.id}`)
-        console.log(res);
+        // console.log(res);
         if(res.data.meta.status==200){
           this.search();
         }
