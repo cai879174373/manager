@@ -14,7 +14,7 @@ export default {
     return {
       option: {
         title: {
-          text: "堆叠区域图"
+          text: "用户数据来源"
         },
         tooltip: {
           trigger: "axis",
