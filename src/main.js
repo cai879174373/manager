@@ -13,7 +13,11 @@ Vue.use(ElementUI);
 import mybread from './components/mybread.vue'
 
 Vue.component('my-bread',mybread)
-
+// 全局过滤器
+import moment from 'moment'
+Vue.filter('formtTime',(value,tempformt)=>{
+  return moment(value).format(tempformt)
+})
 
 
 
