@@ -1,7 +1,7 @@
 <template>
   <div class="users-container">
     <!-- 面包屑模块 -->
-   <my-bread sectitle='用户管理哦' threetitle='用户列表哦'></my-bread>
+   <my-bread sectitle='用户管理' threetitle='用户列表'></my-bread>
     <!-- 输入框模块 -->
     <el-row>
       <el-col :span="6">
