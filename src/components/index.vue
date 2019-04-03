@@ -49,11 +49,11 @@ export default {
     }
   },
   beforeCreate() {
-    if (window.sessionStorage.getItem("token")) {
-    } else {
-      this.$message.error("兄die,请先登陆");
-      this.$router.push("/login");
-    }
+    // if (window.sessionStorage.getItem("token")) {
+    // } else {
+    //   this.$message.error("兄die,请先登陆");
+    //   this.$router.push("/login");
+    // }
   },
   async created() {
     //  获取左侧菜单
