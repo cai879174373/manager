@@ -83,7 +83,7 @@ let router = new VueRouter({
 });
 //创建导航守卫
 router.beforeEach((to, from, next) => {
-  console.log(to);
+  // console.log(to);
   // console.log(from);
   // 判断是否登陆
   // if(to.path=="/login"){
