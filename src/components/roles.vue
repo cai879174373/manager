@@ -62,17 +62,17 @@
 
     <!-- 弹出编辑对话框 -->
     <el-dialog title="编辑角色" :visible.sync="editFormVisible">
-      <el-form :model="addform" ref="addform" :rules="rules">
+      <el-form :model="editform" ref="editform" :rules="rules">
         <el-form-item label="角色名称" prop="roleName" label-width="100">
-          <el-input v-model="addform.roleName" autocomplete="off"></el-input>
+          <el-input v-model="editform.roleName" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色描述" prop="roleDesc" label-width="100">
-          <el-input v-model="addform.roleDesc" autocomplete="off"></el-input>
+          <el-input v-model="editform.roleDesc" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('addform')">确 定</el-button>
+        <el-button type="primary" @click="submiteditForm('editform')">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -85,7 +85,7 @@
         default-expand-all
         :default-checked-keys="checkedkeys"
         :props="defaultProps"
-         ref="tree"
+        ref="tree"
       ></el-tree>
 
       <div slot="footer" class="dialog-footer">
@@ -118,10 +118,15 @@ export default {
       // 数据列表
       roleList: [{}, {}],
       // 树形权限数组数据
-      treeitem:{},
+      treeitem: {},
 
       // 添加数据
       addform: {
+        roleName: "",
+        roleDesc: ""
+      },
+      // 编辑数据
+      editform: {
         roleName: "",
         roleDesc: ""
       },
@@ -140,7 +145,7 @@ export default {
   methods: {
     async getRoles() {
       let res = await this.$axios.get("roles");
-      console.log(res);
+      // console.log(res);
       this.roleList = res.data.data;
     },
     // 提交角色添加数据
@@ -149,7 +154,7 @@ export default {
         if (valid) {
           // 提交数据成功 发送请求
           let res = await this.$axios.post("roles", this.addform);
-          console.log(res);
+          // console.log(res);
           if (res.data.meta.status == 201) {
             // 添加成功
             // 渲染数据
@@ -165,17 +170,74 @@ export default {
       });
     },
 
+    // 编辑角色修改数据
+    submiteditForm(formName) {
+      this.$refs[formName].validate(async valid => {
+        if (valid) {
+          // 提交数据成功 发送请求
+          let res = await this.$axios.put(`roles/${this.editform.id}`,{
+            roleName:this.editform.roleName
+          });
+          // console.log(res);
+          if (res.data.meta.status == 200) {
+            // 添加成功
+            // 渲染数据
+            this.getRoles();
+
+            // 关闭对话框
+            this.editFormVisible = false;
+          }
+        } else {
+          this.$message.warning("输入数据有误!!!");
+          return false;
+        }
+      });
+    },
+
     // 编辑角色数据
-    handleEdit(index, row) {
-      console.log(row);
+   async handleEdit(index, row) {
+      // console.log(row);
       // 弹出编辑对话框
       this.editFormVisible = true;
+    // 查询角色数据
+    let res=await this.$axios.get(`roles/${row.id}`)
+    // console.log(res);
+    this.editform=res.data.data
+    this.editform.id=res.data.data.roleId
+
+    
+
     },
+    // 编辑角色提交
+    // 删除角色据
+    delOne(row){
+       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          
+          // 发送请求删除数据
+          let res =await this.$axios.delete(`roles/${row.id}`)
+          console.log(res);
+          if(res.data.meta.status==200)
+          // 删除成功 重新渲染数据
+           // 渲染数据
+        this.getRoles();
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
+
 
     // 数型弹出框
     async roleedit(row) {
-      console.log(row);
-      this.treeitem=row;
+      // console.log(row);
+      this.treeitem = row;
 
       // 获取数据
       let res = await this.$axios.get("rights/tree");
@@ -196,13 +258,27 @@ export default {
       this.checkedkeys = checkedkeys;
       this.treeVisible = true;
     },
-    treeshow(){
-      this.treeVisible=false;
+    async treeshow() {
+      this.treeVisible = false;
 
       // 获取id
-      let rids=this.$refs.tree.getCheckedKeys().join(',');
-
-
+      let rids = this.$refs.tree.getCheckedKeys().join(",");
+      // console.log(rids);
+      // 获取数据
+      let res = await this.$axios.post(`roles/${this.treeitem.id}/rights`, {
+        rids
+      });
+      // console.log(res);
+      if (res.data.meta.status == 200) {
+        // 更新成功 重新获取数据
+        // 渲染数据
+        this.getRoles();
+      }
+      // 重新 获取左侧菜单
+      let menures = await this.$axios.get("menus");
+      // console.log(res);
+      // this.menulist=res.data.data;
+      this.$store.commit("changemenu", menures.data.data);
     }
   },
   //发送请求

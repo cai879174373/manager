@@ -16,7 +16,7 @@
     <el-container class="my-container">
       <el-aside width="200px" class="my-aside">
         <el-menu router default-active="users" class="el-menu-vertical-demo">
-          <el-submenu :index="item.id+''" v-for="(item,index) in menulist" :key="index">
+          <el-submenu :index="item.id+''" v-for="(item,index) in $store.state.menuList" :key="index">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>{{item.authName}}</span>
@@ -37,11 +37,11 @@
 <script>
 export default {
   name: "index",
-  data() {
-    return {
-      menulist: []
-    };
-  },
+  // data() {
+  //   return {
+  //     menulist: []
+  //   };
+  // },
   methods: {
     logout() {
       window.sessionStorage.removeItem("token");
@@ -59,7 +59,8 @@ export default {
     //  获取左侧菜单
     let res = await this.$axios.get("menus");
     // console.log(res);
-    this.menulist=res.data.data;
+    // this.menulist=res.data.data;
+   this.$store.commit('changemenu',res.data.data)
   }
 };
 </script>
