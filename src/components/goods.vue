@@ -80,6 +80,7 @@ export default {
     })
     console.log(res);
     this.goodList=res.data.data.goods;
+    this.total=res.data.data.total;
   
   }
 };
