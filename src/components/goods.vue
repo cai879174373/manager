@@ -22,9 +22,9 @@
     <!-- 表格 -->
     <el-table :data="goodList" style="width: 100%" border>
       <el-table-column type="index" width="50"></el-table-column>
-      <el-table-column prop="username" label="商品名称" width="180"></el-table-column>
-      <el-table-column prop="email" label="商品价格(元)" width="180"></el-table-column>
-      <el-table-column prop="mobile" label="商品重量" width="180"></el-table-column>
+      <el-table-column prop="goods_name" label="商品名称" width="400"></el-table-column>
+      <el-table-column prop="goods_price" label="商品价格(元)" width="180"></el-table-column>
+      <el-table-column prop="goods_weight" label="商品重量" width="180"></el-table-column>
      
       <el-table-column label="操作">
         <template slot-scope="">
@@ -51,9 +51,9 @@
     <el-pagination
     
       :page-sizes="[5, 10, 21, 33]"
-      :page-size="5"
+      :page-size="senddata.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="0"
+      :total="total"
     ></el-pagination>
    
   </div>
@@ -63,12 +63,23 @@
 export default {
   data() {
     return {
-      goodList:[{},{}]
+      total:0,
+      goodList:[{},{}],
+      senddata:{
+        query:'',
+        pagenum:1,
+        pagesize:10
+      }
     }
   },
  
-  //发送请求
+  //发送请求 获取商品数据
   async created() {
+    let res=await this.$axios.get('goods',{
+      params:this.senddata
+    })
+    console.log(res);
+    this.goodList=res.data.data.goods;
   
   }
 };
