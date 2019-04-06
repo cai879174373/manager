@@ -11,6 +11,28 @@
 
     <!-- 表格 -->
     <el-table :data="roleList" style="width: 100%" border>
+      <!-- 展开行 -->
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-row class="my-row" v-for="level1 in props.row._children" :key="level1.id">
+            <el-col :span="6">
+              <el-tag @close='deltag(level1)' closable type="primary">{{level1.authName}}</el-tag>
+            </el-col>
+            <el-col :span="18">
+              <el-row  v-for="level2 in level1.children" :key="level2.id">
+                <el-col :span="6" >
+                  <el-tag @close='deltag(level2)' closable type="success">{{level2.authName}}</el-tag>
+                </el-col>
+                <el-col :span="18" >
+                  <el-tag @close='deltag(level3)' class="my-tag" v-for="level3 in level2.children" :key="level3.id" closable type="warning">{{level3.authName}}</el-tag>
+                </el-col>
+              </el-row>
+
+             
+            </el-col>
+          </el-row>
+        </template>
+      </el-table-column>
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column prop="roleName" label="角色名称" width="180"></el-table-column>
       <el-table-column prop="roleDesc" label="角色描述" width="180"></el-table-column>
@@ -143,8 +165,16 @@ export default {
   },
 
   methods: {
+    deltag(item){
+      console.log(item);
+    },
     async getRoles() {
       let res = await this.$axios.get("roles");
+      // 处理children坑点 替换children
+      res.data.data.forEach(v => {
+        v._children = v.children;
+        delete v.children;
+      });
       // console.log(res);
       this.roleList = res.data.data;
     },
@@ -175,8 +205,8 @@ export default {
       this.$refs[formName].validate(async valid => {
         if (valid) {
           // 提交数据成功 发送请求
-          let res = await this.$axios.put(`roles/${this.editform.id}`,{
-            roleName:this.editform.roleName
+          let res = await this.$axios.put(`roles/${this.editform.id}`, {
+            roleName: this.editform.roleName
           });
           // console.log(res);
           if (res.data.meta.status == 200) {
@@ -195,48 +225,44 @@ export default {
     },
 
     // 编辑角色数据
-   async handleEdit(index, row) {
+    async handleEdit(index, row) {
       // console.log(row);
       // 弹出编辑对话框
       this.editFormVisible = true;
-    // 查询角色数据
-    let res=await this.$axios.get(`roles/${row.id}`)
-    // console.log(res);
-    this.editform=res.data.data
-    this.editform.id=res.data.data.roleId
-
-    
-
+      // 查询角色数据
+      let res = await this.$axios.get(`roles/${row.id}`);
+      // console.log(res);
+      this.editform = res.data.data;
+      this.editform.id = res.data.data.roleId;
     },
     // 编辑角色提交
     // 删除角色据
-    delOne(row){
-       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async() => {
-          
+    delOne(row) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
           // 发送请求删除数据
-          let res =await this.$axios.delete(`roles/${row.id}`)
+          let res = await this.$axios.delete(`roles/${row.id}`);
           console.log(res);
-          if(res.data.meta.status==200)
-          // 删除成功 重新渲染数据
-           // 渲染数据
-        this.getRoles();
-
-        }).catch(() => {
+          if (res.data.meta.status == 200)
+            // 删除成功 重新渲染数据
+            // 渲染数据
+            this.getRoles();
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
 
-
     // 数型弹出框
     async roleedit(row) {
-      // console.log(row);
+      console.log(row);
       this.treeitem = row;
 
       // 获取数据
@@ -247,14 +273,25 @@ export default {
       let checkedkeys = [];
 
       function gettree(item) {
-        if (item.children) {
-          item.children.forEach(v => {
+        if (item._children) {
+          item._children.forEach(v => {
             checkedkeys.push(v.id);
             gettree(v);
           });
         }
       }
       gettree(row);
+
+      //  row.children.forEach(v => {
+      //   checkedKeys.push(v.id);
+      //   v.children.forEach(v => {
+      //     checkedKeys.push(v.id);
+      //     // 第三层
+      //     v.children.forEach(v => {
+      //       checkedKeys.push(v.id);
+      //     });
+      //   });
+      // });
       this.checkedkeys = checkedkeys;
       this.treeVisible = true;
     },
@@ -290,4 +327,11 @@ export default {
 </script>
 
 <style >
+.my-row{
+  margin-bottom: 10px;
+}
+.my-tag{
+  margin-bottom: 5px;
+  margin-right: 15px;
+}
 </style>

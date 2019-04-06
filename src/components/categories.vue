@@ -10,12 +10,28 @@
     </el-row>
 
     <!-- 表格 -->
-    <el-table :data="categoriesList"  style="width: 100%" border>
+    <el-table :data="categoriesList"  style="width: 100%" border  row-key="cat_id">
       
-      <el-table-column label="分类名称" width="180"></el-table-column>
-      <el-table-column  label="级别" width="180"></el-table-column>
-      <el-table-column  label="是否有效" width="180"></el-table-column>
-      <el-table-column  label="操作" width="180"></el-table-column>
+      <el-table-column prop="cat_name" label="分类名称" width="180"></el-table-column>
+      <el-table-column prop="cat_level" label="级别" width="180">
+        <template slot-scope="scope">
+          <span v-if="scope.row.cat_level==0">一级</span>
+          <span v-if="scope.row.cat_level==1">二级</span>
+          <span v-if="scope.row.cat_level==2">三级</span>
+            
+          
+        </template>
+      </el-table-column>
+      <el-table-column prop="cat_deleted" label="是否有效" width="180">
+         <template slot-scope="scope">
+          <span v-if="scope.row.cat_deleted">无效</span>
+          <span v-else>有效</span>
+          
+            
+          
+        </template>
+      </el-table-column>
+     
      
      
       <el-table-column label="操作">
@@ -166,8 +182,15 @@ export default {
     },
    
   },
-  //发送请求
+  //发送请求 获取数据
   async created() {
+    let res=await this.$axios.get('categories',{
+      params:{
+        type:3
+      }
+    })
+    console.log(res);
+    this.categoriesList=res.data.data
    
   }
 };
